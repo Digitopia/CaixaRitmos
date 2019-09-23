@@ -161,8 +161,12 @@ export default {
 
 html,
 body {
+  height: 100%;
+}
+
+html,
+body {
   background-color: var(--secondary);
-  // height: 100%;
 }
 
 #app {
@@ -197,7 +201,6 @@ img {
   text-align: left;
   align-items: center;
   justify-items: right;
-  height: 80vh;
 }
 
 .instrument-label {
@@ -219,13 +222,9 @@ img {
   &:hover {
     cursor: pointer;
   }
-  // &:hover {
-  //   outline: 1px solid var(--other);
-  // }
   img {
     opacity: 0.5;
     width: 100%;
-    // height: 100%;
     &:hover {
       opacity: 0.7;
     }
