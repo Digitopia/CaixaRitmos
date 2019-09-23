@@ -100,11 +100,9 @@ export default {
 
     document.addEventListener('keypress', evt => {
       console.log(evt)
-      if (evt.key === ' ') this.toggleDrone()
+      if (evt.key === ' ') this.togglePlay()
     })
   },
-
-  mounted() {},
 
   methods: {
     initAudio() {
@@ -164,7 +162,7 @@ export default {
 html,
 body {
   background-color: var(--secondary);
-  height: 100%;
+  // height: 100%;
 }
 
 #app {
@@ -175,6 +173,7 @@ body {
   margin: 0 auto;
   text-align: center;
   color: var(--accent);
+  user-select: none;
 }
 
 img {
@@ -208,7 +207,6 @@ img {
 
 .instrument {
   outline: 1px solid var(--secondary);
-  display: flex;
   padding: 10px;
   &.active {
     img {
