@@ -1,10 +1,26 @@
 <template>
   <div id="app">
     <h1>Caixa de Ritmos</h1>
+    <i
+      class="fa"
+      :class="playing ? 'fa-stop' : 'fa-play'"
+      @click="togglePlay"
+    ></i>
     <div class="grid">
-      <template v-for="instrument in instruments">
-        <div :key="instrument.name">{{ instrument.name }}</div>
-        <div v-for="i in 8" :key="`${instrument.name}-${i}`" class="instrument">
+      <template v-for="(instrument, idxInstrument) in instruments">
+        <div :key="instrument.name">
+          {{ instrument.name }}
+        </div>
+        <div
+          v-for="idxStep in gridSize"
+          :key="`${instrument.name}-${idxStep - 1}`"
+          class="instrument"
+          :class="{
+            active: matrix[idxInstrument][idxStep - 1],
+            activeMeasure: idxStep - 1 === activeMeasure,
+          }"
+          @click="toggleStep(idxInstrument, idxStep - 1)"
+        >
           <img src="img/triangulo.jpg" />
         </div>
       </template>
@@ -15,91 +31,117 @@
 <script>
 import Tone from 'tone'
 
-// function fill(rows, cols, value) {
-//   let matrix = new Array(rows)
-//   for (let i = 0; i < rows; i++) {
-//     matrix[i] = []
-//     for (let j = 0; j < cols; j++) {
-//       matrix[i][j] = value
-//     }
-//   }
-//   return matrix
-// }
+window.Tone = Tone
 
 export default {
   name: 'app',
 
   data() {
     return {
+      playing: false,
+      gridSize: 8,
+      activeMeasure: -1,
+      matrix: [],
       instruments: [
         {
           name: 'Bongós',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/do.wav',
         },
         {
           name: 'Congas',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/re.wav',
         },
         {
           name: 'Clavas ',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/mi.wav',
         },
         {
           name: 'Triângulo',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/fa.wav',
         },
         {
           name: 'Maracas',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/sol.wav',
         },
         {
           name: 'Darbuka',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/la.wav',
         },
         {
           name: 'Pandeireta',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/si.wav',
         },
         {
           name: 'Agogo',
-          icon: 'public/img/triangulo.png',
-          sample: 'public/samples/snap.mp3',
+          icon: 'img/triangulo.png',
+          sample: 'sounds/do.wav',
         },
       ],
-      // matrix: fill(this.instruments.length, 8, 0),
     }
   },
 
   created() {
-    this.samples = new Tone.Players().toMaster()
-    this.instruments.forEach(instrument => {
-      this.samples.add(instrument.name, instrument.sample)
-    })
+    // init matrix
+    for (let i = 0; i < this.instruments.length; i++) {
+      this.matrix[i] = new Array(this.gridSize)
+      for (let j = 0; j < this.gridSize; j++) {
+        this.matrix[i][j] = false
+      }
+    }
 
-    Tone.Transport.bpm.value = 90
-
-    // this.loop = new Tone.Sequence(
-    //   (time, measure) => {
-    //     for (let i = 0; i < this.tracks.length; i++) {
-    //       if (this.matrix[i][measure]) {
-    //         console.log('playing', i, measure)
-    //         this.players.get(this.labels[i]).start(time)
-    //       }
-    //     }
-    //   },
-    //   [0, 1, 2, 3, 4, 5, 6, 7],
-    //   '2m'
-    // )
+    this.initAudio()
   },
 
   mounted() {},
+
+  methods: {
+    initAudio() {
+      // init samples
+      this.samples = new Tone.Players().toMaster()
+      this.instruments.forEach(instrument => {
+        this.samples.add(instrument.name, instrument.sample)
+      })
+
+      window.samples = this.samples
+
+      Tone.Transport.bpm.value = 120
+
+      this.loop = new Tone.Sequence(
+        (time, measure) => {
+          this.activeMeasure = measure
+          for (let i = 0; i < this.instruments.length; i++) {
+            if (this.matrix[i][measure]) {
+              console.log('playing', i, measure)
+              console.log(this.instruments[i].name)
+              this.samples.get(this.instruments[i].name).start(time)
+            }
+          }
+        },
+        [0, 1, 2, 3, 4, 5, 6, 7],
+        '1m'
+      )
+
+      this.loop.start(0)
+    },
+
+    togglePlay() {
+      this.playing = !this.playing
+      if (this.playing) Tone.Transport.start()
+      else Tone.Transport.stop()
+    },
+
+    toggleStep(idxInstrument, idxStep) {
+      this.matrix[idxInstrument][idxStep] = !this.matrix[idxInstrument][idxStep]
+      this.$forceUpdate() // NOTE: because vue doesn't detect changes in the matrix
+    },
+  },
 }
 </script>
 
@@ -126,14 +168,23 @@ export default {
   outline: 1px solid grey;
   display: flex;
   padding: 10px;
+  &.active {
+    img {
+      opacity: 1 !important;
+    }
+  }
+  &.activeMeasure {
+    outline: 1px solid red;
+  }
   &:hover {
     outline: 1px solid black;
   }
   img {
+    opacity: 0.5;
     width: 100%;
     height: 100%;
     &:hover {
-      opacity: 0.5;
+      opacity: 0.7;
     }
   }
 }
