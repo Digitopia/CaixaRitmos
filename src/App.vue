@@ -1,14 +1,9 @@
 <template>
   <div id="app">
-    <h1>Caixa de Ritmos</h1>
-    <i
-      class="fa"
-      :class="playing ? 'fa-stop' : 'fa-play'"
-      @click="togglePlay"
-    ></i>
+    <h1 class="title">Caixa de Ritmos</h1>
     <div class="grid">
       <template v-for="(instrument, idxInstrument) in instruments">
-        <div :key="instrument.name">
+        <div :key="instrument.name" class="instrument-label">
           {{ instrument.name }}
         </div>
         <div
@@ -21,10 +16,15 @@
           }"
           @click="toggleStep(idxInstrument, idxStep - 1)"
         >
-          <img src="img/triangulo.jpg" />
+          <img :src="instrument.icon" />
         </div>
       </template>
     </div>
+    <i
+      class="play fa"
+      :class="playing ? 'fa-stop' : 'fa-play'"
+      @click="togglePlay"
+    ></i>
   </div>
 </template>
 
@@ -97,6 +97,11 @@ export default {
     }
 
     this.initAudio()
+
+    document.addEventListener('keypress', evt => {
+      console.log(evt)
+      if (evt.key === ' ') this.toggleDrone()
+    })
   },
 
   mounted() {},
@@ -134,7 +139,10 @@ export default {
     togglePlay() {
       this.playing = !this.playing
       if (this.playing) Tone.Transport.start()
-      else Tone.Transport.stop()
+      else {
+        this.activeMeasure = -1
+        Tone.Transport.stop()
+      }
     },
 
     toggleStep(idxInstrument, idxStep) {
@@ -146,13 +154,41 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --primary: #e84855;
+  --secondary: #ffc857;
+  --accent: #2e4052;
+  --other: #5eb1bf;
+}
+
+html,
+body {
+  background-color: var(--secondary);
+  height: 100%;
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Raleway', sans-serif;
+  font-weight: normal;
+  box-sizing: border-box;
+  max-width: 1000px;
+  margin: 0 auto;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: var(--accent);
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  &:focus {
+    outline: none !important;
+  }
 }
 
 .grid {
@@ -162,10 +198,16 @@ export default {
   text-align: left;
   align-items: center;
   justify-items: right;
+  height: 80vh;
+}
+
+.instrument-label {
+  font-weight: bold;
+  font-size: 1em;
 }
 
 .instrument {
-  outline: 1px solid grey;
+  outline: 1px solid var(--secondary);
   display: flex;
   padding: 10px;
   &.active {
@@ -174,18 +216,29 @@ export default {
     }
   }
   &.activeMeasure {
-    outline: 1px solid red;
+    outline: 1px solid var(--accent);
   }
   &:hover {
-    outline: 1px solid black;
+    cursor: pointer;
   }
+  // &:hover {
+  //   outline: 1px solid var(--other);
+  // }
   img {
     opacity: 0.5;
     width: 100%;
-    height: 100%;
+    // height: 100%;
     &:hover {
       opacity: 0.7;
     }
+  }
+}
+
+.play {
+  margin-top: 20px;
+  font-size: 3em;
+  &:hover {
+    cursor: pointer;
   }
 }
 </style>
