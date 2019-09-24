@@ -45,17 +45,17 @@ export default {
       instruments: [
         {
           name: 'Bongós',
-          icon: 'img/triangulo.png',
+          icon: 'img/bongos.png',
           sample: 'sounds/do.wav',
         },
         {
           name: 'Congas',
-          icon: 'img/triangulo.png',
+          icon: 'img/congas.png',
           sample: 'sounds/re.wav',
         },
         {
           name: 'Clavas ',
-          icon: 'img/triangulo.png',
+          icon: 'img/clavas.png',
           sample: 'sounds/mi.wav',
         },
         {
@@ -65,22 +65,22 @@ export default {
         },
         {
           name: 'Maracas',
-          icon: 'img/triangulo.png',
+          icon: 'img/maracas.png',
           sample: 'sounds/sol.wav',
         },
         {
           name: 'Darbuka',
-          icon: 'img/triangulo.png',
+          icon: 'img/darbuka.png',
           sample: 'sounds/la.wav',
         },
         {
           name: 'Pandeireta',
-          icon: 'img/triangulo.png',
+          icon: 'img/pandeireta.png',
           sample: 'sounds/si.wav',
         },
         {
           name: 'Agogo',
-          icon: 'img/triangulo.png',
+          icon: 'img/agogo.png',
           sample: 'sounds/do.wav',
         },
       ],
@@ -99,7 +99,6 @@ export default {
     this.initAudio()
 
     document.addEventListener('keypress', evt => {
-      console.log(evt)
       if (evt.key === ' ') this.togglePlay()
     })
   },
@@ -121,8 +120,6 @@ export default {
           this.activeMeasure = measure
           for (let i = 0; i < this.instruments.length; i++) {
             if (this.matrix[i][measure]) {
-              console.log('playing', i, measure)
-              console.log(this.instruments[i].name)
               this.samples.get(this.instruments[i].name).start(time)
             }
           }
