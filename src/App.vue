@@ -158,7 +158,7 @@ export default {
 
 html,
 body {
-  height: 100%;
+  // height: 100%;
 }
 
 html,
@@ -205,9 +205,16 @@ img {
   font-size: 1em;
 }
 
+@media only screen and (max-width: 600px) {
+  .instrument-label {
+    font-size: 10px;
+  }
+}
+
 .instrument {
   outline: 1px solid var(--secondary);
   padding: 10px;
+  text-align: center;
   &.active {
     img {
       opacity: 1 !important;
