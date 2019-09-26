@@ -46,42 +46,42 @@ export default {
         {
           name: 'Bongós',
           icon: 'img/bongos.png',
-          sample: 'sounds/do.wav',
+          sample: 'sounds/bongos.mp3',
         },
         {
           name: 'Congas',
           icon: 'img/congas.png',
-          sample: 'sounds/re.wav',
+          sample: 'sounds/congas.mp3',
         },
         {
           name: 'Clavas ',
           icon: 'img/clavas.png',
-          sample: 'sounds/mi.wav',
+          sample: 'sounds/clavas.mp3',
         },
         {
           name: 'Triângulo',
           icon: 'img/triangulo.png',
-          sample: 'sounds/fa.wav',
+          sample: 'sounds/triangulo.mp3',
         },
         {
           name: 'Maracas',
           icon: 'img/maracas.png',
-          sample: 'sounds/sol.wav',
+          sample: 'sounds/maracas.mp3',
         },
         {
           name: 'Darbuka',
           icon: 'img/darbuka.png',
-          sample: 'sounds/la.wav',
+          sample: 'sounds/darbuka.mp3',
         },
         {
           name: 'Pandeireta',
           icon: 'img/pandeireta.png',
-          sample: 'sounds/si.wav',
+          sample: 'sounds/pandeireta.mp3',
         },
         {
           name: 'Agogo',
           icon: 'img/agogo.png',
-          sample: 'sounds/do.wav',
+          sample: 'sounds/agogo.mp3',
         },
       ],
     }
@@ -113,7 +113,7 @@ export default {
 
       window.samples = this.samples
 
-      Tone.Transport.bpm.value = 120
+      Tone.Transport.bpm.value = 110
 
       this.loop = new Tone.Sequence(
         (time, measure) => {
