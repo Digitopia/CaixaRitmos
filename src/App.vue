@@ -1,5 +1,9 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    @touchstart="hasHover = false"
+    :class="{ 'has-hover': hasHover }"
+  >
     <a
       href="http://www.casadamusica.com/pt/servico-educativo/agenda/2019/11/20-caixa-de-ritmos/1000/?lang=pt#tab=0"
       target="_blank"
@@ -37,12 +41,14 @@
 
 <script>
 import Tone from 'tone'
+import Shake from 'shake.js'
 
 export default {
   name: 'app',
 
   data() {
     return {
+      hasHover: true,
       playing: false,
       gridSize: 8,
       activeMeasure: -1,
@@ -106,6 +112,9 @@ export default {
     document.addEventListener('keypress', evt => {
       if (evt.key === ' ') this.togglePlay()
     })
+
+    new Shake({ threshold: 10, timeout: 1000 }).start()
+    window.addEventListener('shake', this.shaked, false)
   },
 
   mounted() {
@@ -117,6 +126,16 @@ export default {
   },
 
   methods: {
+    shaked() {
+      for (let i = 0; i < this.matrix.length; i++) {
+        for (let j = 0; j < this.matrix[i].length; j++) {
+          this.matrix[i][j] = false
+        }
+      }
+      this.$forceUpdate()
+      if (this.playing) this.togglePlay()
+    },
+
     resize() {
       const labels = document.querySelectorAll('.instrument-label')
       labels.forEach(label => {
@@ -210,7 +229,7 @@ img {
 
 .instrument {
   border: 1px solid var(--secondary);
-  // padding: 1px;
+  // outline: 1px solid grey;
   text-align: center;
   &.active {
     img {
@@ -222,17 +241,22 @@ img {
   }
   &:hover {
     cursor: pointer;
-    // outline: 1px solid var(--other);
+    // outline: 1px solid grey;
   }
   img {
     // padding: 5px;
+    // &:hover {
+    //   opacity: 0.9;
+    // }
     opacity: 0.1;
     width: 80%;
     height: 80%;
-    &:hover {
-      opacity: 0.4;
-    }
   }
+}
+
+// NOTE: separating this rule so that can better toggle it if mobile or not
+.has-hover .instrument img:hover {
+  opacity: 0.4;
 }
 
 .play {
@@ -249,6 +273,7 @@ img {
   -webkit-tap-highlight-color: transparent !important;
   font-size: 4vmin;
   padding-top: 4vmin;
+  padding-bottom: 1vmin;
 }
 
 // --------------------
