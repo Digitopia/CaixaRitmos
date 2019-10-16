@@ -1,24 +1,31 @@
 <template>
   <div id="app">
+    <a
+      href="http://www.casadamusica.com/pt/servico-educativo/agenda/2019/11/20-caixa-de-ritmos/1000/?lang=pt#tab=0"
+      target="_blank"
+      ><img src="icon.jpeg" class="icon" alt=""
+    /></a>
     <h1 class="title">Caixa de Ritmos</h1>
-    <div class="grid">
-      <template v-for="(instrument, idxInstrument) in instruments">
-        <div :key="instrument.name" class="instrument-label">
-          {{ instrument.name }}
-        </div>
-        <div
-          v-for="idxStep in gridSize"
-          :key="`${instrument.name}-${idxStep - 1}`"
-          class="instrument"
-          :class="{
-            active: matrix[idxInstrument][idxStep - 1],
-            activeMeasure: idxStep - 1 === activeMeasure,
-          }"
-          @click="toggleStep(idxInstrument, idxStep - 1)"
-        >
-          <img :src="instrument.icon" />
-        </div>
-      </template>
+    <div class="container">
+      <div class="content">
+        <template v-for="(instrument, idxInstrument) in instruments">
+          <div :key="instrument.name" class="instrument-label item">
+            {{ instrument.name }}
+          </div>
+          <div
+            v-for="idxStep in gridSize"
+            :key="`${instrument.name}-${idxStep - 1}`"
+            class="instrument item"
+            :class="{
+              active: matrix[idxInstrument][idxStep - 1],
+              activeMeasure: idxStep - 1 === activeMeasure,
+            }"
+            @click="toggleStep(idxInstrument, idxStep - 1)"
+          >
+            <img :src="instrument.icon" />
+          </div>
+        </template>
+      </div>
     </div>
     <i
       class="play fa"
@@ -30,8 +37,6 @@
 
 <script>
 import Tone from 'tone'
-
-window.Tone = Tone
 
 export default {
   name: 'app',
@@ -103,15 +108,28 @@ export default {
     })
   },
 
+  mounted() {
+    window.addEventListener('resize', () => {
+      this.resize()
+    })
+
+    this.resize()
+  },
+
   methods: {
+    resize() {
+      const labels = document.querySelectorAll('.instrument-label')
+      labels.forEach(label => {
+        window.fitText(label, 0.6)
+      })
+    },
+
     initAudio() {
       // init samples
       this.samples = new Tone.Players().toMaster()
       this.instruments.forEach(instrument => {
         this.samples.add(instrument.name, instrument.sample)
       })
-
-      window.samples = this.samples
 
       Tone.Transport.bpm.value = 110
 
@@ -158,11 +176,6 @@ export default {
 
 html,
 body {
-  // height: 100%;
-}
-
-html,
-body {
   background-color: var(--secondary);
 }
 
@@ -170,8 +183,6 @@ body {
   font-family: 'Raleway', sans-serif;
   font-weight: normal;
   box-sizing: border-box;
-  max-width: 1000px;
-  margin: 0 auto;
   text-align: center;
   color: var(--accent);
   user-select: none;
@@ -191,29 +202,15 @@ img {
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  grid-gap: 10px;
-  text-align: left;
-  align-items: center;
-  justify-items: right;
-}
-
 .instrument-label {
   font-weight: bold;
-  font-size: 1em;
-}
-
-@media only screen and (max-width: 600px) {
-  .instrument-label {
-    font-size: 10px;
-  }
+  border: none !important;
+  text-align: center;
 }
 
 .instrument {
-  outline: 1px solid var(--secondary);
-  padding: 10px;
+  border: 1px solid var(--secondary);
+  // padding: 1px;
   text-align: center;
   &.active {
     img {
@@ -221,15 +218,17 @@ img {
     }
   }
   &.activeMeasure {
-    outline: 1px solid var(--accent);
+    border: 1px solid var(--accent);
   }
   &:hover {
     cursor: pointer;
     // outline: 1px solid var(--other);
   }
   img {
+    // padding: 5px;
     opacity: 0.1;
-    width: 100%;
+    width: 80%;
+    height: 80%;
     &:hover {
       opacity: 0.4;
     }
@@ -237,10 +236,68 @@ img {
 }
 
 .play {
-  margin-top: 20px;
-  font-size: 3em;
+  margin-top: 3vmin;
+  font-size: 5vmin;
   &:hover {
     cursor: pointer;
   }
+}
+
+.title {
+  color: var(--accent);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent !important;
+  font-size: 4vmin;
+  padding-top: 4vmin;
+}
+
+// --------------------
+
+.container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  // height: 100vh;
+  // width: 100vw;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  height: 80vw;
+  width: 80vw;
+}
+
+.item {
+  // border: 1px solid #aaa;
+  height: calc(11.11% - 4px);
+  margin: 1px;
+  width: calc(11.11% - 4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (orientation: landscape) {
+  .content {
+    height: 80vh;
+    width: 80vh;
+  }
+}
+
+.icon {
+  position: absolute;
+  top: 1vmin;
+  right: 1vmin;
+  opacity: 0.6;
+  &:hover {
+    opacity: 1;
+  }
+  border-radius: 5px;
+  height: 50px;
+  max-height: 8vmin;
 }
 </style>
