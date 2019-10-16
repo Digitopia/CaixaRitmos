@@ -225,12 +225,13 @@ img {
   }
   &:hover {
     cursor: pointer;
+    // outline: 1px solid var(--other);
   }
   img {
-    opacity: 0.5;
+    opacity: 0.1;
     width: 100%;
     &:hover {
-      opacity: 0.7;
+      opacity: 0.4;
     }
   }
 }
