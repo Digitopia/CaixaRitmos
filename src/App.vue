@@ -173,6 +173,7 @@ export default {
       if (this.playing) Tone.Transport.start()
       else {
         this.activeMeasure = -1
+        this.samples.stopAll()
         Tone.Transport.stop()
       }
     },
